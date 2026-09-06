@@ -1,0 +1,140 @@
+{% extends 'base.html' %}
+
+{% block title %}Upload Summary — Dev Castle LMS{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1 class="h3 mb-1">Upload Summary</h1>
+        <p class="text-muted mb-0">
+            Batch #{{ batch.pk }} — {{ batch.class_name }} —
+            {{ batch.uploaded_at|date:"M j, Y, g:i A" }}
+        </p>
+    </div>
+    <div class="d-flex gap-2">
+        <a href="{% url 'analytics:upload' %}" class="btn btn-primary btn-sm">New Upload</a>
+        <a href="{% url 'analytics:upload_history' %}" class="btn btn-outline-secondary btn-sm">History</a>
+    </div>
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body">
+                <div class="text-muted small">Status</div>
+                <div class="fw-semibold">
+                    {% if batch.status == 'processed' %}
+                    <span class="badge text-bg-success">{{ batch.get_status_display }}</span>
+                    {% elif batch.status == 'failed' %}
+                    <span class="badge text-bg-danger">{{ batch.get_status_display }}</span>
+                    {% else %}
+                    <span class="badge text-bg-secondary">{{ batch.get_status_display }}</span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body">
+                <div class="text-muted small">Rows processed</div>
+                <div class="fs-4 fw-semibold text-success">{{ processed_count }}</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body">
+                <div class="text-muted small">Rows skipped</div>
+                <div class="fs-4 fw-semibold text-warning">{{ skipped_count }}</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body">
+                <div class="text-muted small">Uploaded by</div>
+                <div class="fw-semibold">{{ batch.uploaded_by.username }}</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if stats %}
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-header bg-white">
+        <h2 class="h6 mb-0">Batch statistics</h2>
+    </div>
+    <div class="card-body">
+        <div class="row g-3 mb-4">
+            <div class="col-md-4">
+                <div class="text-muted small">Class average (%)</div>
+                <div class="fs-5 fw-semibold">{{ stats.class_average_pct }}%</div>
+            </div>
+            <div class="col-md-4">
+                <div class="text-muted small">Attendance average</div>
+                <div class="fs-5 fw-semibold">{{ stats.attendance_average }}%</div>
+            </div>
+            <div class="col-md-4">
+                <div class="text-muted small">Attendance range</div>
+                <div class="fs-5 fw-semibold">{{ stats.attendance_min }}% – {{ stats.attendance_max }}%</div>
+            </div>
+            <div class="col-md-6">
+                <div class="text-muted small">Marks obtained (min – max)</div>
+                <div class="fs-5 fw-semibold">{{ stats.marks_min }} – {{ stats.marks_max }}</div>
+            </div>
+        </div>
+
+        {% if stats.per_subject %}
+        <h3 class="h6">Per-subject averages</h3>
+        <div class="table-responsive">
+            <table class="table table-sm table-striped align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th>Subject</th>
+                        <th class="text-end">Average %</th>
+                        <th class="text-end">Records</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in stats.per_subject %}
+                    <tr>
+                        <td>{{ row.subject }}</td>
+                        <td class="text-end">{{ row.average_pct }}%</td>
+                        <td class="text-end">{{ row.record_count }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endif %}
+
+{% if skipped_rows %}
+<div class="card border-0 shadow-sm">
+    <div class="card-header bg-white">
+        <h2 class="h6 mb-0">Skipped rows</h2>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-sm mb-0">
+                <thead>
+                    <tr>
+                        <th>Error</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for line in skipped_rows %}
+                    <tr>
+                        <td class="text-danger small">{{ line }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

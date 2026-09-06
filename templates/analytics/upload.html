@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+
+{% block title %}Upload Performance Data — Dev Castle LMS{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1 class="h3 mb-1">Upload Performance CSV</h1>
+        <p class="text-muted mb-0">Import student marks and attendance from a CSV file.</p>
+    </div>
+    <a href="{% url 'analytics:upload_history' %}" class="btn btn-outline-secondary btn-sm">Upload History</a>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-7">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body p-4">
+                {% if structural_errors %}
+                <div class="alert alert-danger">
+                    <h2 class="h6 alert-heading">CSV structure errors</h2>
+                    <p class="mb-2">No data was saved. Fix the file and try again.</p>
+                    <ul class="mb-0">
+                        {% for error in structural_errors %}
+                        <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+
+                <form method="post" enctype="multipart/form-data" novalidate>
+                    {% csrf_token %}
+
+                    {% if form.non_field_errors %}
+                    <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+                    {% endif %}
+
+                    <div class="mb-3">
+                        <label for="{{ form.class_name.id_for_label }}" class="form-label">Class name</label>
+                        {{ form.class_name }}
+                        {% if form.class_name.errors %}
+                        <div class="text-danger small mt-1">{{ form.class_name.errors }}</div>
+                        {% else %}
+                        <div class="form-text">{{ form.class_name.help_text }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="{{ form.csv_file.id_for_label }}" class="form-label">CSV file</label>
+                        {{ form.csv_file }}
+                        {% if form.csv_file.errors %}
+                        <div class="text-danger small mt-1">{{ form.csv_file.errors }}</div>
+                        {% else %}
+                        <div class="form-text">{{ form.csv_file.help_text }}</div>
+                        {% endif %}
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Upload &amp; Process</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-5">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body p-4">
+                <h2 class="h6 text-uppercase text-muted">Required CSV columns</h2>
+                <ul class="small mb-3">
+                    <li><code>roll_number</code> — must match an existing student</li>
+                    <li><code>subject</code></li>
+                    <li><code>marks_obtained</code></li>
+                    <li><code>total_marks</code></li>
+                    <li><code>attendance_percentage</code> (0–100)</li>
+                </ul>
+                <p class="small text-muted mb-0">
+                    Rows with unknown roll numbers or invalid values are skipped.
+                    Valid rows are imported; nothing is written until validation completes.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

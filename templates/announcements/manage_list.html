@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% block title %}Announcements — Dev Castle LMS{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1 class="h3 mb-1">Announcements</h1>
+        <p class="text-muted mb-0">Post and manage broadcasts to students.</p>
+    </div>
+    <a href="{% url 'announcements:create' %}" class="btn btn-primary btn-sm">New Announcement</a>
+</div>
+
+{% if announcements %}
+<div class="row g-3">
+    {% for announcement in announcements %}
+    <div class="col-12">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                    <div>
+                        <h2 class="h5 mb-1">{{ announcement.title }}</h2>
+                        <p class="text-muted small mb-0">
+                            {{ announcement.created_at|date:"M j, Y, g:i A" }}
+                            · {{ announcement.posted_by.username }}
+                            · {{ announcement.audience_label }}
+                            {% if not announcement.is_active %}
+                            <span class="badge text-bg-secondary">Inactive</span>
+                            {% endif %}
+                        </p>
+                    </div>
+                    <div class="d-flex gap-2">
+                        {% if is_admin or announcement.posted_by_id == user.id %}
+                        <a href="{% url 'announcements:edit' announcement.pk %}" class="btn btn-sm btn-outline-primary">Edit</a>
+                        <a href="{% url 'announcements:delete' announcement.pk %}" class="btn btn-sm btn-outline-danger">Delete</a>
+                        {% endif %}
+                    </div>
+                </div>
+                <p class="mb-0">{{ announcement.body|linebreaksbr }}</p>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="card border-0 shadow-sm">
+    <div class="card-body text-center text-muted py-5">
+        No announcements yet.
+        <a href="{% url 'announcements:create' %}">Post the first one</a>.
+    </div>
+</div>
+{% endif %}
+{% endblock %}

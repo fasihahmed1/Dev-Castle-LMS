@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block title %}Quiz Report - {{ quiz.title }}{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-start mb-4">
+    <div>
+        <h1 class="h3 mb-1">Quiz Results Report</h1>
+        <p class="text-muted mb-0">{{ quiz.title }} - {{ quiz.class_name }} / {{ quiz.section }}</p>
+    </div>
+    <a href="{% url 'reports:quiz_pdf' quiz.pk %}" class="btn btn-primary btn-sm">Download PDF</a>
+</div>
+
+{% include 'reports/partials/quiz_report_body.html' %}
+{% endblock %}

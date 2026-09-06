@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+
+{% block title %}My Assignments — Dev Castle LMS{% endblock %}
+
+{% block content %}
+<h1 class="h3 mb-4">My Assignments</h1>
+
+<div class="card border-0 shadow-sm">
+    <div class="card-body p-0">
+        {% if rows %}
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Title</th>
+                        <th>Due date</th>
+                        <th>Your status</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in rows %}
+                    <tr>
+                        <td>
+                            <strong>{{ row.assignment.title }}</strong>
+                            <div class="small text-muted">{{ row.assignment.description|truncatewords:12 }}</div>
+                        </td>
+                        <td>{{ row.assignment.due_date|date:"M j, Y, g:i A" }}</td>
+                        <td>
+                            {% if row.status == 'not_submitted' %}
+                            <span class="badge text-bg-secondary">Not submitted</span>
+                            {% elif row.status == 'on_time' %}
+                            <span class="badge text-bg-success">Submitted on time</span>
+                            {% else %}
+                            <span class="badge text-bg-warning text-dark">Submitted late</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-end">
+                            <a href="{% url 'assignments:submit' row.assignment.pk %}" class="btn btn-sm btn-primary">
+                                {% if row.submission %}Re-submit{% else %}Submit{% endif %}
+                            </a>
+                            {% if row.submission %}
+                            <a href="{% url 'assignments:download' row.submission.pk %}" class="btn btn-sm btn-outline-secondary">Download</a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="p-4 text-center text-muted">No assignments for your class right now.</div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

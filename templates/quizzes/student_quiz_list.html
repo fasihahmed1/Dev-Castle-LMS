@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+
+{% block title %}My Quizzes — Dev Castle LMS{% endblock %}
+
+{% block content %}
+<h1 class="h3 mb-4">My Quizzes</h1>
+
+{% if in_progress %}
+<div class="card border-0 shadow-sm mb-4 border-warning">
+    <div class="card-header bg-white">
+        <h2 class="h6 mb-0">In progress</h2>
+    </div>
+    <div class="list-group list-group-flush">
+        {% for attempt in in_progress %}
+        <div class="list-group-item d-flex justify-content-between align-items-center">
+            <div>
+                <strong>{{ attempt.quiz.title }}</strong>
+                <span class="text-muted small d-block">{{ attempt.quiz.subject }}</span>
+            </div>
+            <a href="{% url 'quizzes:take' attempt.pk %}" class="btn btn-warning btn-sm">Continue</a>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
+<div class="card border-0 shadow-sm">
+    <div class="card-header bg-white">
+        <h2 class="h6 mb-0">Available quizzes</h2>
+    </div>
+    <div class="list-group list-group-flush">
+        {% for quiz in available_quizzes %}
+        <div class="list-group-item d-flex justify-content-between align-items-center">
+            <div>
+                <strong>{{ quiz.title }}</strong>
+                <span class="text-muted small d-block">
+                    {{ quiz.subject }} — {{ quiz.question_count }} question{{ quiz.question_count|pluralize }}
+                </span>
+            </div>
+            {% if quiz.question_count > 0 %}
+                {% if quiz.requires_pre_quiz_notice %}
+                <a href="{% url 'quizzes:notice' quiz.pk %}" class="btn btn-primary btn-sm">Start Quiz</a>
+                {% else %}
+                <form method="post" action="{% url 'quizzes:start' quiz.pk %}" class="d-inline">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-primary btn-sm">Start Quiz</button>
+                </form>
+                {% endif %}
+            {% else %}
+            <span class="badge text-bg-secondary">No questions</span>
+            {% endif %}
+        </div>
+        {% empty %}
+        <div class="list-group-item text-muted">No quizzes available right now.</div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

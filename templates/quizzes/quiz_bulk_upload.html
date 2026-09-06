@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+
+{% block title %}Bulk Upload Quiz — Dev Castle LMS{% endblock %}
+
+{% block content %}
+<div class="row g-4">
+    <div class="col-lg-7">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body p-4">
+                <h1 class="h4 mb-3">Bulk Upload Quiz</h1>
+
+                {% if structural_errors %}
+                <div class="alert alert-danger">
+                    <h2 class="h6">CSV structure errors</h2>
+                    <ul class="mb-0">{% for e in structural_errors %}<li>{{ e }}</li>{% endfor %}</ul>
+                </div>
+                {% endif %}
+
+                {% if row_errors %}
+                <div class="alert alert-warning">
+                    <h2 class="h6">Row errors — nothing was saved</h2>
+                    <ul class="mb-0">{% for e in row_errors %}<li>{{ e }}</li>{% endfor %}</ul>
+                </div>
+                {% endif %}
+
+                <form method="post" enctype="multipart/form-data" novalidate>
+                    {% csrf_token %}
+                    {% for field in form %}
+                    <div class="mb-3{% if field.name == 'is_active' %} form-check{% endif %}">
+                        {% if field.name == 'is_active' %}
+                        {{ field }}
+                        <label class="form-check-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                        {% else %}
+                        <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                        {{ field }}
+                        {% endif %}
+                        {% if field.help_text %}<div class="form-text">{{ field.help_text }}</div>{% endif %}
+                        {% if field.errors %}<div class="text-danger small">{{ field.errors }}</div>{% endif %}
+                    </div>
+                    {% endfor %}
+                    <button type="submit" class="btn btn-primary">Upload &amp; Create Quiz</button>
+                    <a href="{% url 'quizzes:list' %}" class="btn btn-outline-secondary">Cancel</a>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-5">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body">
+                <h2 class="h6 text-muted">Required CSV columns</h2>
+                <ul class="small mb-0">
+                    <li><code>question_text</code></li>
+                    <li><code>option_a</code> … <code>option_d</code></li>
+                    <li><code>correct_option</code> (A/B/C/D)</li>
+                    <li><code>marks</code> (optional, default 1)</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

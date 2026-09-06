@@ -1,0 +1,7 @@
+roll_number,subject,marks_obtained,total_marks,attendance_percentage
+S001,Mathematics,85,100,92.5
+S002,Mathematics,72,100,88.0
+S003,Mathematics,91,100,95.0
+S001,Physics,78,100,92.5
+S002,Physics,65,100,88.0
+S003,Physics,88,100,95.0

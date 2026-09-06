@@ -1,0 +1,29 @@
+{% extends 'reports/pdf/base_report.html' %}
+
+{% block content %}
+<h1>Quiz Results Report</h1>
+<p class="muted">{{ quiz.title }} - {{ quiz.class_name }} / {{ quiz.section }}</p>
+
+<table class="summary">
+    <tr>
+        <td><div class="label">Attempts</div><div class="value">{{ summary.attempt_count }}</div></td>
+        <td><div class="label">Average</div><div class="value">{{ summary.average_score|default:"-" }}</div></td>
+        <td><div class="label">Highest</div><div class="value">{{ summary.highest_score|default:"-" }}</div></td>
+        <td><div class="label">Lowest</div><div class="value">{{ summary.lowest_score|default:"-" }}</div></td>
+    </tr>
+</table>
+
+{% if charts.score_distribution %}<div class="chart"><img src="{{ charts.score_distribution }}" alt="Score chart"></div>{% endif %}
+
+<h2>Submitted Attempts</h2>
+<table>
+    <thead><tr><th>Student</th><th>Roll #</th><th class="text-end">Score</th><th>Submitted</th></tr></thead>
+    <tbody>
+        {% for attempt in attempts %}
+        <tr><td>{{ attempt.student.full_name }}</td><td>{{ attempt.student.roll_number }}</td><td class="text-end">{{ attempt.score }}</td><td>{{ attempt.submitted_at|date:"M j, Y, g:i A" }}</td></tr>
+        {% empty %}
+        <tr><td colspan="4">No submitted attempts.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

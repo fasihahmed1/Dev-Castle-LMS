@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+
+{% block title %}Quizzes — Dev Castle LMS{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1 class="h3 mb-1">Quizzes</h1>
+        <p class="text-muted mb-0">Create and manage class quizzes.</p>
+    </div>
+    <div class="d-flex gap-2">
+        <a href="{% url 'quizzes:bulk_upload' %}" class="btn btn-outline-primary btn-sm">Bulk Upload CSV</a>
+        <a href="{% url 'quizzes:create' %}" class="btn btn-primary btn-sm">Create Quiz</a>
+    </div>
+</div>
+
+<div class="card border-0 shadow-sm">
+    <div class="card-body p-0">
+        {% if quizzes %}
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Title</th>
+                        <th>Subject</th>
+                        <th>Class / Section</th>
+                        <th>Questions</th>
+                        <th>Status</th>
+                        <th>Created</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for quiz in quizzes %}
+                    <tr>
+                        <td>{{ quiz.title }}</td>
+                        <td>{{ quiz.subject }}</td>
+                        <td>{{ quiz.class_name }} / {{ quiz.section }}</td>
+                        <td>{{ quiz.question_count }}</td>
+                        <td>
+                            {% if quiz.is_active %}
+                            <span class="badge text-bg-success">Active</span>
+                            {% else %}
+                            <span class="badge text-bg-secondary">Draft</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ quiz.created_at|date:"M j, Y" }}</td>
+                        <td class="text-end">
+                            <a href="{% url 'quizzes:detail' quiz.pk %}" class="btn btn-sm btn-outline-primary">Manage</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="p-4 text-center text-muted">No quizzes yet.</div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

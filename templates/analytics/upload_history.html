@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+
+{% block title %}Upload History — Dev Castle LMS{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1 class="h3 mb-1">Upload History</h1>
+        <p class="text-muted mb-0">Past CSV upload batches and their processing status.</p>
+    </div>
+    <a href="{% url 'analytics:upload' %}" class="btn btn-primary btn-sm">New Upload</a>
+</div>
+
+<div class="card border-0 shadow-sm">
+    <div class="card-body p-0">
+        {% if batches %}
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>ID</th>
+                        <th>Class</th>
+                        <th>Uploaded by</th>
+                        <th>Date</th>
+                        <th>Status</th>
+                        <th class="text-end">Rows</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for batch in batches %}
+                    <tr>
+                        <td>#{{ batch.pk }}</td>
+                        <td>{{ batch.class_name }}</td>
+                        <td>{{ batch.uploaded_by.username }}</td>
+                        <td>{{ batch.uploaded_at|date:"M j, Y, g:i A" }}</td>
+                        <td>
+                            {% if batch.status == 'processed' %}
+                            <span class="badge text-bg-success">{{ batch.get_status_display }}</span>
+                            {% elif batch.status == 'failed' %}
+                            <span class="badge text-bg-danger">{{ batch.get_status_display }}</span>
+                            {% else %}
+                            <span class="badge text-bg-secondary">{{ batch.get_status_display }}</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-end">{{ batch.row_count }}</td>
+                        <td class="text-end">
+                            <a href="{% url 'analytics:upload_summary' batch.pk %}" class="btn btn-sm btn-outline-primary">
+                                View Summary
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="p-4 text-center text-muted">
+            No uploads yet.
+            <a href="{% url 'analytics:upload' %}">Upload your first CSV</a>.
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block title %}Delete Assignment — Dev Castle LMS{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-6">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body p-4">
+                <h1 class="h4 text-danger mb-3">Delete assignment</h1>
+                <p>Delete <strong>{{ assignment.title }}</strong> and all student submissions?</p>
+                <form method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">Yes, delete</button>
+                    <a href="{% url 'assignments:manage' %}" class="btn btn-outline-secondary">Cancel</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

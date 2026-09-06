@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block title %}Submit — {{ assignment.title }}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body p-4">
+                <h1 class="h4 mb-1">{{ assignment.title }}</h1>
+                <p class="text-muted mb-3">Due {{ assignment.due_date|date:"M j, Y, g:i A" }}</p>
+                <p class="mb-4">{{ assignment.description|linebreaksbr }}</p>
+
+                {% if existing %}
+                <div class="alert alert-info py-2">
+                    You already submitted on {{ existing.submitted_at|date:"M j, Y, g:i A" }}
+                    {% if existing.is_late %}(late){% else %}(on time){% endif %}.
+                    Uploading again will replace your previous file.
+                </div>
+                {% endif %}
+
+                {% if assignment.is_past_due %}
+                <div class="alert alert-warning py-2">
+                    The due date has passed. New uploads will be marked <strong>late</strong>.
+                </div>
+                {% endif %}
+
+                <form method="post" enctype="multipart/form-data" novalidate>
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label class="form-label" for="{{ form.submitted_file.id_for_label }}">Submission file</label>
+                        {{ form.submitted_file }}
+                        {% if form.submitted_file.help_text %}
+                        <div class="form-text">{{ form.submitted_file.help_text }}</div>
+                        {% endif %}
+                        {% if form.submitted_file.errors %}
+                        <div class="text-danger small">{{ form.submitted_file.errors }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary">Upload submission</button>
+                        <a href="{% url 'assignments:student_list' %}" class="btn btn-outline-secondary">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

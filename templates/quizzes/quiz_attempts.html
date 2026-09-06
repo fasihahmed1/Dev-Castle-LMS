@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+
+{% block title %}Attempts — {{ quiz.title }}{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1 class="h3 mb-1">Quiz Attempts</h1>
+        <p class="text-muted mb-0">{{ quiz.title }}</p>
+    </div>
+    <a href="{% url 'quizzes:detail' quiz.pk %}" class="btn btn-outline-secondary btn-sm">Back to Quiz</a>
+</div>
+
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-body">
+        <form method="get" class="row g-3 align-items-end">
+            <div class="col-md-5">{{ filter_form.q.label_tag }} {{ filter_form.q }}</div>
+            <div class="col-md-4">{{ filter_form.sort.label_tag }} {{ filter_form.sort }}</div>
+            <div class="col-md-3">
+                <button type="submit" class="btn btn-outline-primary btn-sm">Apply</button>
+                <a href="{% url 'quizzes:attempts' quiz.pk %}" class="btn btn-outline-secondary btn-sm">Clear</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="card border-0 shadow-sm">
+    <div class="card-body p-0">
+        {% if attempts %}
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Student</th>
+                        <th>Roll #</th>
+                        <th class="text-end">Score</th>
+                        <th>Violations</th>
+                        <th>Status</th>
+                        <th>Submitted</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for attempt in attempts %}
+                    <tr class="{% if attempt.disqualified %}table-danger{% endif %}">
+                        <td>{{ attempt.student.full_name }}</td>
+                        <td><code>{{ attempt.student.roll_number }}</code></td>
+                        <td class="text-end fw-semibold">
+                            {% if attempt.disqualified %}0{% else %}{{ attempt.score }}{% endif %}
+                        </td>
+                        <td>
+                            {% if attempt.quiz.anti_cheat_enabled %}
+                            {{ attempt.violation_count }}/{{ attempt.quiz.max_violations_allowed }}
+                            {% else %}—{% endif %}
+                        </td>
+                        <td>
+                            {% if attempt.disqualified %}
+                            <span class="badge text-bg-danger">Disqualified</span>
+                            {% elif attempt.auto_submitted %}
+                            <span class="badge text-bg-info text-dark">Auto-submitted</span>
+                            {% else %}
+                            <span class="badge text-bg-success">Completed</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ attempt.submitted_at|date:"M j, Y, g:i A" }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="p-4 text-center text-muted">No submitted attempts yet.</div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

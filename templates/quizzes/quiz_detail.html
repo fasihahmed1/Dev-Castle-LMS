@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ quiz.title }} — Dev Castle LMS{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-start mb-4">
+    <div>
+        <h1 class="h3 mb-1">{{ quiz.title }}</h1>
+        <p class="text-muted mb-0">
+            {{ quiz.subject }} — {{ quiz.class_name }} / Section {{ quiz.section }}
+            {% if quiz.is_active %}<span class="badge text-bg-success ms-1">Active</span>{% else %}<span class="badge text-bg-secondary ms-1">Draft</span>{% endif %}
+            {% if quiz.timer_enabled %}<span class="badge text-bg-info text-dark ms-1">Timer: {{ quiz.duration_minutes }} min</span>{% endif %}
+            {% if quiz.anti_cheat_enabled %}<span class="badge text-bg-warning text-dark ms-1">Anti-cheat: {{ quiz.max_violations_allowed }} max</span>{% endif %}
+        </p>
+    </div>
+    <div class="d-flex gap-2">
+        <a href="{% url 'quizzes:edit_questions' quiz.pk %}" class="btn btn-primary btn-sm">Edit Questions</a>
+        <a href="{% url 'quizzes:edit' quiz.pk %}" class="btn btn-outline-secondary btn-sm">Edit Quiz</a>
+        <a href="{% url 'quizzes:attempts' quiz.pk %}" class="btn btn-outline-secondary btn-sm">View Attempts</a>
+    </div>
+</div>
+
+<div class="card border-0 shadow-sm">
+    <div class="card-header bg-white">
+        <h2 class="h6 mb-0">Questions ({{ quiz.question_count }}) — teacher view only</h2>
+    </div>
+    <div class="card-body">
+        {% for q in quiz.questions.all %}
+        <div class="mb-4 pb-3 {% if not forloop.last %}border-bottom{% endif %}">
+            <p class="fw-semibold mb-2">{{ forloop.counter }}. {{ q.question_text }}</p>
+            <ul class="list-unstyled small mb-1">
+                <li>A. {{ q.option_a }}</li>
+                <li>B. {{ q.option_b }}</li>
+                <li>C. {{ q.option_c }}</li>
+                <li>D. {{ q.option_d }}</li>
+            </ul>
+            <span class="badge text-bg-info text-dark">Correct: {{ q.correct_option }}</span>
+            <span class="badge text-bg-light text-dark">{{ q.marks }} mark{{ q.marks|pluralize }}</span>
+        </div>
+        {% empty %}
+        <p class="text-muted mb-0">No questions yet. <a href="{% url 'quizzes:edit_questions' quiz.pk %}">Add questions</a>.</p>
+        {% endfor %}
+    </div>
+</div>
+
+<a href="{% url 'quizzes:list' %}" class="btn btn-link mt-3">← Back to quizzes</a>
+{% endblock %}

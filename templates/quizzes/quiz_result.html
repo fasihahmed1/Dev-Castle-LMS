@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block title %}Quiz Result — {{ attempt.quiz.title }}{% endblock %}
+
+{% block content %}
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-body p-4 text-center">
+        <h1 class="h3 mb-2">{{ attempt.quiz.title }}</h1>
+        <p class="display-4 fw-bold text-primary mb-1">{{ attempt.score }}</p>
+        <p class="text-muted mb-0">Your score</p>
+        {% if attempt.auto_submitted and not attempt.disqualified %}
+        <p class="small text-warning mt-2 mb-0">This attempt was auto-submitted when the timer expired.</p>
+        {% endif %}
+        <p class="small text-muted mt-2">Submitted {{ attempt.submitted_at|date:"M j, Y, g:i A" }}</p>
+    </div>
+</div>
+
+<div class="card border-0 shadow-sm">
+    <div class="card-header bg-white">
+        <h2 class="h6 mb-0">Your answers</h2>
+    </div>
+    <div class="list-group list-group-flush">
+        {% for answer in answers %}
+        <div class="list-group-item d-flex justify-content-between align-items-start">
+            <div>
+                <p class="mb-1">{{ answer.question.question_text|truncatewords:20 }}</p>
+                <span class="small text-muted">You selected: {{ answer.selected_option|default:"—" }}</span>
+            </div>
+            {% if answer.is_correct %}
+            <span class="badge text-bg-success">Correct</span>
+            {% else %}
+            <span class="badge text-bg-danger">Incorrect</span>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<a href="{% url 'quizzes:student_list' %}" class="btn btn-outline-secondary mt-4">Back to My Quizzes</a>
+{% endblock %}

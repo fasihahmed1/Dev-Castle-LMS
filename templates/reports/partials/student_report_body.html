@@ -1,0 +1,47 @@
+<div class="row g-3 mb-4">
+    <div class="col-md-3"><div class="card border-0 shadow-sm"><div class="card-body"><div class="text-muted small">Class</div><div class="fw-semibold">{{ student.class_name }} / {{ student.section }}</div></div></div></div>
+    <div class="col-md-3"><div class="card border-0 shadow-sm"><div class="card-body"><div class="text-muted small">Records</div><div class="fs-5 fw-semibold">{{ summary.record_count }}</div></div></div></div>
+    <div class="col-md-3"><div class="card border-0 shadow-sm"><div class="card-body"><div class="text-muted small">Average marks</div><div class="fs-5 fw-semibold">{{ summary.average_percentage|default:"-" }}%</div></div></div></div>
+    <div class="col-md-3"><div class="card border-0 shadow-sm"><div class="card-body"><div class="text-muted small">Quiz attempts</div><div class="fs-5 fw-semibold">{{ summary.quiz_attempt_count }}</div></div></div></div>
+</div>
+
+<div class="row g-4 mb-4">
+    {% if charts.performance_by_subject %}<div class="col-lg-6"><div class="card border-0 shadow-sm"><div class="card-body"><img src="{{ charts.performance_by_subject }}" alt="Performance by subject" class="img-fluid"></div></div></div>{% endif %}
+    {% if charts.attendance_by_subject %}<div class="col-lg-6"><div class="card border-0 shadow-sm"><div class="card-body"><img src="{{ charts.attendance_by_subject }}" alt="Attendance by subject" class="img-fluid"></div></div></div>{% endif %}
+</div>
+
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-header bg-white"><h2 class="h6 mb-0">Performance History</h2></div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-sm table-striped mb-0">
+                <thead><tr><th>Subject</th><th class="text-end">Marks</th><th class="text-end">Total</th><th class="text-end">%</th><th>Grade</th><th class="text-end">Attendance</th><th>Date</th></tr></thead>
+                <tbody>
+                {% for row in performance_rows %}
+                <tr><td>{{ row.record.subject }}</td><td class="text-end">{{ row.record.marks_obtained }}</td><td class="text-end">{{ row.record.total_marks }}</td><td class="text-end">{{ row.percentage }}%</td><td>{{ row.grade }}</td><td class="text-end">{{ row.record.attendance_percentage }}%</td><td>{{ row.record.created_at|date:"M j, Y" }}</td></tr>
+                {% empty %}
+                <tr><td colspan="7" class="text-center text-muted py-3">No performance records.</td></tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="card border-0 shadow-sm">
+    <div class="card-header bg-white"><h2 class="h6 mb-0">Quiz Attempts</h2></div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-sm table-striped mb-0">
+                <thead><tr><th>Quiz</th><th class="text-end">Score</th><th>Started</th><th>Submitted</th></tr></thead>
+                <tbody>
+                {% for attempt in quiz_attempts %}
+                <tr><td>{{ attempt.quiz.title }}</td><td class="text-end">{{ attempt.score|default:"-" }}</td><td>{{ attempt.started_at|date:"M j, Y, g:i A" }}</td><td>{{ attempt.submitted_at|date:"M j, Y, g:i A"|default:"In progress" }}</td></tr>
+                {% empty %}
+                <tr><td colspan="4" class="text-center text-muted py-3">No quiz attempts.</td></tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

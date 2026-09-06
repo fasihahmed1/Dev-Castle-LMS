@@ -1,0 +1,35 @@
+{% extends 'reports/pdf/base_report.html' %}
+
+{% block content %}
+<h1>Class Performance Report</h1>
+<p class="muted">{{ class_name }} / Section {{ section }}</p>
+
+<table class="summary">
+    <tr>
+        <td><div class="label">Students</div><div class="value">{{ summary.student_count }}</div></td>
+        <td><div class="label">Average marks</div><div class="value">{{ summary.average_marks|default:"-" }}%</div></td>
+        <td><div class="label">Attendance</div><div class="value">{{ summary.average_attendance|default:"-" }}%</div></td>
+        <td><div class="label">Pass / Fail</div><div class="value">{{ summary.pass_count }} / {{ summary.fail_count }}</div></td>
+    </tr>
+</table>
+
+{% if charts.performance_by_subject %}<div class="chart"><img src="{{ charts.performance_by_subject }}" alt="Performance chart"></div>{% endif %}
+{% if charts.grade_distribution %}<div class="chart"><img src="{{ charts.grade_distribution }}" alt="Grade chart"></div>{% endif %}
+
+<h2>Subject Summary</h2>
+<table>
+    <thead><tr><th>Subject</th><th class="text-end">Records</th><th class="text-end">Average %</th><th class="text-end">Attendance %</th></tr></thead>
+    <tbody>
+        {% for row in subject_rows %}
+        <tr><td>{{ row.subject }}</td><td class="text-end">{{ row.records }}</td><td class="text-end">{{ row.average_percentage }}%</td><td class="text-end">{{ row.average_attendance }}%</td></tr>
+        {% empty %}
+        <tr><td colspan="4">No performance records.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<h2>Grade Distribution</h2>
+<table>
+    <tbody>{% for grade, count in summary.grade_counts.items %}<tr><th>Grade {{ grade }}</th><td class="text-end">{{ count }}</td></tr>{% endfor %}</tbody>
+</table>
+{% endblock %}

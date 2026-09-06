@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ student.full_name }} — Dev Castle LMS{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-start mb-4">
+    <div>
+        <h1 class="h3 mb-1">{{ student.full_name }}</h1>
+        <p class="text-muted mb-0">
+            Roll # <code>{{ student.roll_number }}</code> —
+            {{ student.class_name }} / Section {{ student.section }}
+        </p>
+    </div>
+    <div class="d-flex gap-2">
+        <a href="{% url 'reports:student' student.pk %}" class="btn btn-outline-primary btn-sm">Report</a>
+        {% if can_edit %}
+        <a href="{% url 'students:edit' student.pk %}" class="btn btn-primary btn-sm">Edit</a>
+        {% endif %}
+        {% if is_admin %}
+        <a href="{% url 'students:delete' student.pk %}" class="btn btn-outline-danger btn-sm">Delete</a>
+        {% endif %}
+        {% if user.profile.role != 'student' %}
+        <a href="{% url 'students:list' %}" class="btn btn-outline-secondary btn-sm">Back to list</a>
+        {% endif %}
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-6">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-header bg-white">
+                <h2 class="h6 mb-0">Student details</h2>
+            </div>
+            <div class="card-body">
+                <dl class="row mb-0">
+                    <dt class="col-sm-4 text-muted">Full name</dt>
+                    <dd class="col-sm-8">{{ student.full_name }}</dd>
+
+                    <dt class="col-sm-4 text-muted">Roll number</dt>
+                    <dd class="col-sm-8"><code>{{ student.roll_number }}</code></dd>
+
+                    <dt class="col-sm-4 text-muted">Class</dt>
+                    <dd class="col-sm-8">{{ student.class_name }}</dd>
+
+                    <dt class="col-sm-4 text-muted">Section</dt>
+                    <dd class="col-sm-8">{{ student.section }}</dd>
+
+                    <dt class="col-sm-4 text-muted">Date of birth</dt>
+                    <dd class="col-sm-8">{{ student.date_of_birth|date:"M j, Y"|default:"—" }}</dd>
+
+                    <dt class="col-sm-4 text-muted">Contact</dt>
+                    <dd class="col-sm-8">{{ student.contact_number|default:"—" }}</dd>
+
+                    <dt class="col-sm-4 text-muted">Guardian</dt>
+                    <dd class="col-sm-8">{{ student.guardian_name|default:"—" }}</dd>
+                </dl>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-6">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-header bg-white">
+                <h2 class="h6 mb-0">Account</h2>
+            </div>
+            <div class="card-body">
+                <dl class="row mb-0">
+                    <dt class="col-sm-4 text-muted">Username</dt>
+                    <dd class="col-sm-8">{{ student.user.username }}</dd>
+
+                    <dt class="col-sm-4 text-muted">Email</dt>
+                    <dd class="col-sm-8">{{ student.user.email|default:"—" }}</dd>
+
+                    <dt class="col-sm-4 text-muted">Registered</dt>
+                    <dd class="col-sm-8">{{ student.created_at|date:"M j, Y" }}</dd>
+                </dl>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

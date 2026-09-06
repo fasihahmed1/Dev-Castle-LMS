@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block title %}Class Report - {{ class_name }} {{ section }}{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-start mb-4">
+    <div>
+        <h1 class="h3 mb-1">Class Performance Report</h1>
+        <p class="text-muted mb-0">{{ class_name }} / Section {{ section }}</p>
+    </div>
+    <a href="{% url 'reports:class_pdf' %}?class_name={{ class_name|urlencode }}&section={{ section|urlencode }}" class="btn btn-primary btn-sm">Download PDF</a>
+</div>
+
+{% include 'reports/partials/class_report_body.html' %}
+{% endblock %}

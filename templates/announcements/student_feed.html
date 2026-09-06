@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block title %}Announcements — Dev Castle LMS{% endblock %}
+
+{% block content %}
+<h1 class="h3 mb-4">Announcements</h1>
+
+{% if announcements %}
+<div class="row g-3">
+    {% for announcement in announcements %}
+    <div class="col-12">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body">
+                <h2 class="h5 mb-1">{{ announcement.title }}</h2>
+                <p class="text-muted small mb-3">
+                    {{ announcement.created_at|date:"M j, Y, g:i A" }}
+                    · Posted by {{ announcement.posted_by.get_full_name|default:announcement.posted_by.username }}
+                </p>
+                <p class="mb-0">{{ announcement.body|linebreaksbr }}</p>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="card border-0 shadow-sm">
+    <div class="card-body text-center text-muted py-5">No announcements for you right now.</div>
+</div>
+{% endif %}
+{% endblock %}

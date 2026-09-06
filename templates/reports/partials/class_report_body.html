@@ -1,0 +1,25 @@
+<div class="row g-3 mb-4">
+    <div class="col-md-3"><div class="card border-0 shadow-sm"><div class="card-body"><div class="text-muted small">Students</div><div class="fs-5 fw-semibold">{{ summary.student_count }}</div></div></div></div>
+    <div class="col-md-3"><div class="card border-0 shadow-sm"><div class="card-body"><div class="text-muted small">Average marks</div><div class="fs-5 fw-semibold">{{ summary.average_marks|default:"-" }}%</div></div></div></div>
+    <div class="col-md-3"><div class="card border-0 shadow-sm"><div class="card-body"><div class="text-muted small">Attendance</div><div class="fs-5 fw-semibold">{{ summary.average_attendance|default:"-" }}%</div></div></div></div>
+    <div class="col-md-3"><div class="card border-0 shadow-sm"><div class="card-body"><div class="text-muted small">Pass / Fail</div><div class="fs-5 fw-semibold">{{ summary.pass_count }} / {{ summary.fail_count }}</div></div></div></div>
+</div>
+
+<div class="row g-4 mb-4">
+    {% if charts.performance_by_subject %}<div class="col-lg-6"><div class="card border-0 shadow-sm"><div class="card-body"><img src="{{ charts.performance_by_subject }}" alt="Performance by subject" class="img-fluid"></div></div></div>{% endif %}
+    {% if charts.grade_distribution %}<div class="col-lg-6"><div class="card border-0 shadow-sm"><div class="card-body"><img src="{{ charts.grade_distribution }}" alt="Grade distribution" class="img-fluid"></div></div></div>{% endif %}
+    {% if charts.attendance_by_subject %}<div class="col-lg-6"><div class="card border-0 shadow-sm"><div class="card-body"><img src="{{ charts.attendance_by_subject }}" alt="Attendance by subject" class="img-fluid"></div></div></div>{% endif %}
+</div>
+
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-header bg-white"><h2 class="h6 mb-0">Grade Distribution</h2></div>
+    <div class="card-body"><div class="row g-3">{% for grade, count in summary.grade_counts.items %}<div class="col"><div class="text-muted small">Grade {{ grade }}</div><div class="fs-5 fw-semibold">{{ count }}</div></div>{% endfor %}</div></div>
+</div>
+
+<div class="card border-0 shadow-sm">
+    <div class="card-header bg-white"><h2 class="h6 mb-0">Subject Summary</h2></div>
+    <div class="card-body p-0"><div class="table-responsive"><table class="table table-sm table-striped mb-0">
+        <thead><tr><th>Subject</th><th class="text-end">Records</th><th class="text-end">Average %</th><th class="text-end">Attendance %</th></tr></thead>
+        <tbody>{% for row in subject_rows %}<tr><td>{{ row.subject }}</td><td class="text-end">{{ row.records }}</td><td class="text-end">{{ row.average_percentage }}%</td><td class="text-end">{{ row.average_attendance }}%</td></tr>{% empty %}<tr><td colspan="4" class="text-center text-muted py-3">No performance records.</td></tr>{% endfor %}</tbody>
+    </table></div></div>
+</div>

@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block title %}Disqualified — {{ attempt.quiz.title }}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-7">
+        <div class="card border-0 shadow-sm border-danger">
+            <div class="card-body p-4 text-center">
+                <h1 class="h3 text-danger mb-3">Attempt Disqualified</h1>
+                <p class="lead mb-3">
+                    This attempt has been disqualified due to repeated tab/window switching.
+                </p>
+                <p class="text-muted mb-1">
+                    Quiz: <strong>{{ attempt.quiz.title }}</strong>
+                </p>
+                <p class="text-muted mb-4">
+                    Violations recorded: <strong>{{ attempt.violation_count }}</strong>
+                    (limit: {{ attempt.quiz.max_violations_allowed }})
+                </p>
+                <p class="display-6 fw-bold text-danger mb-4">Score: 0</p>
+                <a href="{% url 'quizzes:student_list' %}" class="btn btn-outline-secondary">Back to My Quizzes</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

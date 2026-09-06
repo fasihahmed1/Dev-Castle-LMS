@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+
+{% block title %}Reports - Dev Castle LMS{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1 class="h3 mb-1">Reports</h1>
+        <p class="text-muted mb-0">Export performance, class, and quiz results as print-ready PDFs.</p>
+    </div>
+</div>
+
+<div class="row g-4">
+    {% if role == 'student' and student %}
+    <div class="col-lg-6">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body">
+                <h2 class="h5">My Student Report</h2>
+                <p class="text-muted">Profile, marks history, quiz attempts, and charts.</p>
+                <a href="{% url 'reports:student' student.pk %}" class="btn btn-primary btn-sm">View Report</a>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    {% if role != 'student' %}
+    <div class="col-lg-6">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body">
+                <h2 class="h5">Individual Student Report</h2>
+                <p class="text-muted">Open a student from the Students page, then use the Report button.</p>
+                <a href="{% url 'students:list' %}" class="btn btn-primary btn-sm">Choose Student</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-6">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body">
+                <h2 class="h5">Class Performance Report</h2>
+                <form method="get" action="{% url 'reports:class' %}" class="row g-3 align-items-end">
+                    <div class="col-md-5">
+                        <label class="form-label">Class</label>
+                        <input name="class_name" class="form-control" list="classNames" required>
+                        <datalist id="classNames">
+                            {% for row in class_choices %}<option value="{{ row.class_name }}">{% endfor %}
+                        </datalist>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Section</label>
+                        <input name="section" class="form-control" list="sections" required>
+                        <datalist id="sections">
+                            {% for row in class_choices %}<option value="{{ row.section }}">{% endfor %}
+                        </datalist>
+                    </div>
+                    <div class="col-md-3">
+                        <button class="btn btn-primary btn-sm" type="submit">View</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-6">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body">
+                <h2 class="h5">Quiz Results Report</h2>
+                {% if quiz_choices %}
+                <div class="list-group list-group-flush">
+                    {% for quiz in quiz_choices|slice:":6" %}
+                    <a class="list-group-item list-group-item-action px-0" href="{% url 'reports:quiz' quiz.pk %}">
+                        {{ quiz.title }} <span class="text-muted small">{{ quiz.class_name }} / {{ quiz.section }}</span>
+                    </a>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <p class="text-muted mb-0">No quizzes available.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

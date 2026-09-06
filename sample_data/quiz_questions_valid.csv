@@ -1,0 +1,6 @@
+question_text,option_a,option_b,option_c,option_d,correct_option,marks
+"What is 2 + 2?","3","4","5","6",B,1
+"What is the capital of Pakistan?","Lahore","Karachi","Islamabad","Peshawar",C,2
+"Which is a Python web framework?","React","Django","Angular","Vue",B,1
+"What does HTML stand for?","Hyper Text Markup Language","High Tech Machine Language","Home Tool Markup Language","Hyperlink Text Model Language",A,1
+"Which keyword defines a function in Python?","func","define","def","function",C,1

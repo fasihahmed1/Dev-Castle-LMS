@@ -1,0 +1,27 @@
+﻿# Node / Next.js
+node_modules/
+.next/
+out/
+.env
+.env.local
+.env*.local
+.vercel
+*.tsbuildinfo
+next-env.d.ts
+
+# Python / Django
+__pycache__/
+*.pyc
+*.pyo
+venv/
+env/
+.venv/
+*.sqlite3
+staticfiles/
+media/
+
+# General
+*.log
+.DS_Store
+.vscode/
+.idea/

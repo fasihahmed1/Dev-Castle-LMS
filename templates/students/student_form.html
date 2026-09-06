@@ -1,0 +1,106 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ form_title }} — Dev Castle LMS{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body p-4">
+                <h1 class="h4 mb-4">{{ form_title }}</h1>
+
+                <form method="post" novalidate>
+                    {% csrf_token %}
+
+                    {% if form.non_field_errors %}
+                    <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+                    {% endif %}
+
+                    {% if form.username %}
+                    <h2 class="h6 text-uppercase text-muted mb-3">Account</h2>
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-6">
+                            <label for="{{ form.username.id_for_label }}" class="form-label">Username *</label>
+                            {{ form.username }}
+                            {% if form.username.errors %}<div class="text-danger small">{{ form.username.errors }}</div>{% endif %}
+                        </div>
+                        <div class="col-md-6">
+                            <label for="{{ form.password.id_for_label }}" class="form-label">Password *</label>
+                            {{ form.password }}
+                            {% if form.password.errors %}<div class="text-danger small">{{ form.password.errors }}</div>{% endif %}
+                            {% if form.password.help_text %}<div class="form-text">{{ form.password.help_text }}</div>{% endif %}
+                        </div>
+                        <div class="col-md-6">
+                            <label for="{{ form.email.id_for_label }}" class="form-label">Email</label>
+                            {{ form.email }}
+                            {% if form.email.errors %}<div class="text-danger small">{{ form.email.errors }}</div>{% endif %}
+                        </div>
+                    </div>
+                    {% elif form.email %}
+                    <h2 class="h6 text-uppercase text-muted mb-3">Account</h2>
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-6">
+                            <label class="form-label">Username</label>
+                            <input type="text" class="form-control" value="{{ student.user.username }}" disabled>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="{{ form.email.id_for_label }}" class="form-label">Email</label>
+                            {{ form.email }}
+                            {% if form.email.errors %}<div class="text-danger small">{{ form.email.errors }}</div>{% endif %}
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <h2 class="h6 text-uppercase text-muted mb-3">Student details</h2>
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-6">
+                            <label for="{{ form.roll_number.id_for_label }}" class="form-label">Roll number *</label>
+                            {{ form.roll_number }}
+                            {% if form.roll_number.errors %}<div class="text-danger small">{{ form.roll_number.errors }}</div>{% endif %}
+                        </div>
+                        <div class="col-md-6">
+                            <label for="{{ form.full_name.id_for_label }}" class="form-label">Full name *</label>
+                            {{ form.full_name }}
+                            {% if form.full_name.errors %}<div class="text-danger small">{{ form.full_name.errors }}</div>{% endif %}
+                        </div>
+                        <div class="col-md-6">
+                            <label for="{{ form.class_name.id_for_label }}" class="form-label">Class *</label>
+                            {{ form.class_name }}
+                            {% if form.class_name.errors %}<div class="text-danger small">{{ form.class_name.errors }}</div>{% endif %}
+                        </div>
+                        <div class="col-md-6">
+                            <label for="{{ form.section.id_for_label }}" class="form-label">Section *</label>
+                            {{ form.section }}
+                            {% if form.section.errors %}<div class="text-danger small">{{ form.section.errors }}</div>{% endif %}
+                        </div>
+                        <div class="col-md-6">
+                            <label for="{{ form.date_of_birth.id_for_label }}" class="form-label">Date of birth</label>
+                            {{ form.date_of_birth }}
+                            {% if form.date_of_birth.errors %}<div class="text-danger small">{{ form.date_of_birth.errors }}</div>{% endif %}
+                        </div>
+                        <div class="col-md-6">
+                            <label for="{{ form.contact_number.id_for_label }}" class="form-label">Contact number</label>
+                            {{ form.contact_number }}
+                            {% if form.contact_number.errors %}<div class="text-danger small">{{ form.contact_number.errors }}</div>{% endif %}
+                        </div>
+                        <div class="col-12">
+                            <label for="{{ form.guardian_name.id_for_label }}" class="form-label">Guardian name</label>
+                            {{ form.guardian_name }}
+                            {% if form.guardian_name.errors %}<div class="text-danger small">{{ form.guardian_name.errors }}</div>{% endif %}
+                        </div>
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary">{{ submit_label }}</button>
+                        {% if student %}
+                        <a href="{% url 'students:detail' student.pk %}" class="btn btn-outline-secondary">Cancel</a>
+                        {% else %}
+                        <a href="{% url 'students:list' %}" class="btn btn-outline-secondary">Cancel</a>
+                        {% endif %}
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+
+{% block title %}Assignments — Dev Castle LMS{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1 class="h3 mb-1">Assignments</h1>
+        <p class="text-muted mb-0">Create and track student submissions.</p>
+    </div>
+    <a href="{% url 'assignments:create' %}" class="btn btn-primary btn-sm">New Assignment</a>
+</div>
+
+<div class="card border-0 shadow-sm">
+    <div class="card-body p-0">
+        {% if rows %}
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Title</th>
+                        <th>Class / Section</th>
+                        <th>Due date</th>
+                        <th>Submissions</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in rows %}
+                    <tr>
+                        <td>{{ row.assignment.title }}</td>
+                        <td>{{ row.assignment.class_name }} / {{ row.assignment.section }}</td>
+                        <td>{{ row.assignment.due_date|date:"M j, Y, g:i A" }}</td>
+                        <td>
+                            <span class="badge text-bg-{% if row.submitted == row.total %}success{% elif row.submitted > 0 %}warning{% else %}secondary{% endif %}">
+                                {{ row.submitted }}/{{ row.total }} submitted
+                            </span>
+                        </td>
+                        <td class="text-end">
+                            <a href="{% url 'assignments:detail' row.assignment.pk %}" class="btn btn-sm btn-outline-primary">View</a>
+                            {% if is_admin or row.assignment.posted_by_id == user.id %}
+                            <a href="{% url 'assignments:edit' row.assignment.pk %}" class="btn btn-sm btn-outline-secondary">Edit</a>
+                            <a href="{% url 'assignments:delete' row.assignment.pk %}" class="btn btn-sm btn-outline-danger">Delete</a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="p-4 text-center text-muted">No assignments yet.</div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

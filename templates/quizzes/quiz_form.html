@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ form_title }} — Dev Castle LMS{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-7">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body p-4">
+                <h1 class="h4 mb-4">{{ form_title }}</h1>
+                <form method="post" novalidate id="quizForm">
+                    {% csrf_token %}
+
+                    {% if form.non_field_errors %}
+                    <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+                    {% endif %}
+
+                    {% for field in form %}
+                        {% if field.name == 'is_active' %}
+                        <div class="mb-3 form-check">
+                            {{ field }}
+                            <label class="form-check-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                            {% if field.errors %}<div class="text-danger small">{{ field.errors }}</div>{% endif %}
+                        </div>
+
+                        <hr class="my-4">
+
+                        <div class="mb-3 form-check">
+                            {{ form.timer_enabled }}
+                            <label class="form-check-label" for="id_timer_enabled">Enable Timer</label>
+                        </div>
+                        <div class="mb-3 ms-4" id="durationField" style="display:none;">
+                            <label class="form-label" for="id_duration_minutes">{{ form.duration_minutes.label }}</label>
+                            {{ form.duration_minutes }}
+                            {% if form.duration_minutes.errors %}<div class="text-danger small">{{ form.duration_minutes.errors }}</div>{% endif %}
+                        </div>
+
+                        <div class="mb-3 form-check">
+                            {{ form.anti_cheat_enabled }}
+                            <label class="form-check-label" for="id_anti_cheat_enabled">Enable Anti-Cheat Detection</label>
+                        </div>
+                        <div class="mb-3 ms-4" id="violationsField" style="display:none;">
+                            <label class="form-label" for="id_max_violations_allowed">{{ form.max_violations_allowed.label }}</label>
+                            {{ form.max_violations_allowed }}
+                            {% if form.max_violations_allowed.errors %}<div class="text-danger small">{{ form.max_violations_allowed.errors }}</div>{% endif %}
+                        </div>
+
+                        {% elif field.name not in 'timer_enabled duration_minutes anti_cheat_enabled max_violations_allowed' %}
+                        <div class="mb-3">
+                            <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                            {{ field }}
+                            {% if field.errors %}<div class="text-danger small">{{ field.errors }}</div>{% endif %}
+                        </div>
+                        {% endif %}
+                    {% endfor %}
+
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary">{{ submit_label }}</button>
+                        <a href="{% if quiz %}{% url 'quizzes:detail' quiz.pk %}{% else %}{% url 'quizzes:list' %}{% endif %}" class="btn btn-outline-secondary">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+(function () {
+    const timerCb = document.getElementById('id_timer_enabled');
+    const durationField = document.getElementById('durationField');
+    const antiCheatCb = document.getElementById('id_anti_cheat_enabled');
+    const violationsField = document.getElementById('violationsField');
+
+    function toggleTimer() {
+        durationField.style.display = timerCb.checked ? 'block' : 'none';
+    }
+    function toggleAntiCheat() {
+        violationsField.style.display = antiCheatCb.checked ? 'block' : 'none';
+    }
+
+    timerCb.addEventListener('change', toggleTimer);
+    antiCheatCb.addEventListener('change', toggleAntiCheat);
+    toggleTimer();
+    toggleAntiCheat();
+})();
+</script>
+{% endblock %}

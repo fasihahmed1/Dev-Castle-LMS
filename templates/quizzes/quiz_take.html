@@ -1,0 +1,144 @@
+{% extends 'base.html' %}
+
+{% block title %}Take Quiz — {{ attempt.quiz.title }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    .quiz-take-page, .quiz-take-page * {
+        -webkit-user-select: none !important;
+        -moz-user-select: none !important;
+        user-select: none !important;
+    }
+    .quiz-take-page input[type="radio"] {
+        pointer-events: auto;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="quiz-take-page" id="quizTakePage">
+    <div class="d-flex justify-content-between align-items-start mb-4">
+        <div>
+            <h1 class="h3 mb-1">{{ attempt.quiz.title }}</h1>
+            <p class="text-muted mb-0">{{ attempt.quiz.subject }} — answer all questions below</p>
+        </div>
+        {% if timer_enabled and time_expires_iso %}
+        <div class="text-end">
+            <div class="text-muted small">Time remaining</div>
+            <div class="fs-4 fw-bold text-primary" id="quizTimer">--:--</div>
+        </div>
+        {% endif %}
+    </div>
+
+    <div id="violationAlert" class="alert alert-warning py-2 d-none" role="alert"></div>
+
+    <form method="post" action="{% url 'quizzes:submit' attempt.pk %}" id="quizForm">
+        {% csrf_token %}
+
+        {% for item in display_questions %}
+        <div class="card border-0 shadow-sm mb-3">
+            <div class="card-body">
+                <p class="fw-semibold mb-3">{{ forloop.counter }}. {{ item.question.question_text }}</p>
+                {% for opt in item.options %}
+                <div class="form-check mb-2">
+                    <input class="form-check-input" type="radio"
+                           name="question_{{ item.question.pk }}"
+                           id="q{{ item.question.pk }}_{{ opt.display }}"
+                           value="{{ opt.display }}" required>
+                    <label class="form-check-label" for="q{{ item.question.pk }}_{{ opt.display }}">
+                        <strong>{{ opt.display }}.</strong> {{ opt.text }}
+                    </label>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endfor %}
+
+        <button type="submit" class="btn btn-primary btn-lg" id="submitBtn">Submit Quiz</button>
+    </form>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+(function () {
+    const page = document.getElementById('quizTakePage');
+    const form = document.getElementById('quizForm');
+
+    // ── Silent copy/paste & selection block (always on quiz-taking page) ──
+    ['contextmenu', 'copy', 'cut', 'paste'].forEach(function (evt) {
+        page.addEventListener(evt, function (e) { e.preventDefault(); });
+    });
+
+    function getCookie(name) {
+        const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
+        return match ? decodeURIComponent(match[2]) : '';
+    }
+
+    {% if anti_cheat_enabled %}
+    const violationUrl = "{% url 'quizzes:record_violation' attempt.pk %}";
+    const disqualifiedUrl = "{% url 'quizzes:disqualified' attempt.pk %}";
+    const alertBox = document.getElementById('violationAlert');
+    let reporting = false;
+
+    function reportViolation(type) {
+        if (reporting) return;
+        reporting = true;
+        fetch(violationUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCookie('csrftoken'),
+            },
+            body: JSON.stringify({ type: type }),
+        })
+        .then(function (r) { return r.json(); })
+        .then(function (data) {
+            reporting = false;
+            if (data.disqualified) {
+                window.location.href = disqualifiedUrl;
+                return;
+            }
+            if (data.message) {
+                alertBox.textContent = data.message;
+                alertBox.classList.remove('d-none');
+            }
+        })
+        .catch(function () { reporting = false; });
+    }
+
+    document.addEventListener('visibilitychange', function () {
+        if (document.visibilityState === 'hidden') {
+            reportViolation('tab_switch');
+        }
+    });
+    window.addEventListener('blur', function () {
+        reportViolation('window_blur');
+    });
+    {% endif %}
+
+    {% if timer_enabled and time_expires_iso %}
+    const expiresAt = new Date("{{ time_expires_iso }}");
+    const timerEl = document.getElementById('quizTimer');
+    const submitBtn = document.getElementById('submitBtn');
+
+    function updateTimer() {
+        const now = new Date();
+        const diff = expiresAt - now;
+        if (diff <= 0) {
+            timerEl.textContent = '0:00';
+            timerEl.classList.replace('text-primary', 'text-danger');
+            submitBtn.disabled = true;
+            form.submit();
+            return;
+        }
+        const mins = Math.floor(diff / 60000);
+        const secs = Math.floor((diff % 60000) / 1000);
+        timerEl.textContent = mins + ':' + String(secs).padStart(2, '0');
+    }
+    updateTimer();
+    setInterval(updateTimer, 1000);
+    {% endif %}
+})();
+</script>
+{% endblock %}

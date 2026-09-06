@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block title %}Teacher Dashboard — Dev Castle LMS{% endblock %}
+
+{% block content %}
+<div class="card border-0 shadow-sm">
+    <div class="card-body p-4">
+        <h1 class="h3 mb-2">Teacher Dashboard</h1>
+        <p class="text-muted mb-0">
+            Welcome, <strong>{{ user.get_full_name|default:user.username }}</strong>.
+            You are signed in as <span class="badge text-bg-success">{{ role_display }}</span>.
+        </p>
+    </div>
+</div>
+{% endblock %}

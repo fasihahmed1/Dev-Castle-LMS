@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+
+{% block title %}Edit Questions — {{ quiz.title }}{% endblock %}
+
+{% block content %}
+<h1 class="h4 mb-1">Edit Questions</h1>
+<p class="text-muted mb-4">{{ quiz.title }}</p>
+
+<form method="post" novalidate>
+    {% csrf_token %}
+    {{ formset.management_form }}
+
+    {% if formset.non_form_errors %}
+    <div class="alert alert-danger">{{ formset.non_form_errors }}</div>
+    {% endif %}
+
+    {% for form in formset %}
+    <div class="card border-0 shadow-sm mb-3">
+        <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h2 class="h6 mb-0">Question {{ forloop.counter }}</h2>
+                {% if form.DELETE %}
+                <div class="form-check">
+                    {{ form.DELETE }}
+                    <label class="form-check-label text-danger" for="{{ form.DELETE.id_for_label }}">Delete</label>
+                </div>
+                {% endif %}
+            </div>
+            {% for hidden in form.hidden_fields %}{{ hidden }}{% endfor %}
+            <div class="mb-3">
+                <label class="form-label">Question text</label>
+                {{ form.question_text }}
+                {% if form.question_text.errors %}<div class="text-danger small">{{ form.question_text.errors }}</div>{% endif %}
+            </div>
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label">Option A</label>{{ form.option_a }}
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Option B</label>{{ form.option_b }}
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Option C</label>{{ form.option_c }}
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Option D</label>{{ form.option_d }}
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Correct option</label>{{ form.correct_option }}
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Marks</label>{{ form.marks }}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+
+    <div class="d-flex gap-2">
+        <button type="submit" class="btn btn-primary">Save Questions</button>
+        <a href="{% url 'quizzes:detail' quiz.pk %}" class="btn btn-outline-secondary">Cancel</a>
+    </div>
+</form>
+{% endblock %}

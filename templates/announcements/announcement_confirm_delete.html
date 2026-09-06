@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block title %}Delete Announcement — Dev Castle LMS{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-6">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body p-4">
+                <h1 class="h4 text-danger mb-3">Delete announcement</h1>
+                <p>Are you sure you want to delete <strong>{{ announcement.title }}</strong>?</p>
+                <p class="text-muted small">Audience: {{ announcement.audience_label }}</p>
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-danger">Yes, delete</button>
+                        <a href="{% url 'announcements:manage' %}" class="btn btn-outline-secondary">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

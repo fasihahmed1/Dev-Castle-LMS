@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block title %}Delete {{ student.full_name }} — Dev Castle LMS{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-6">
+        <div class="card border-0 shadow-sm border-danger">
+            <div class="card-body p-4">
+                <h1 class="h4 text-danger mb-3">Delete student</h1>
+                <p>
+                    Are you sure you want to delete
+                    <strong>{{ student.full_name }}</strong>
+                    (roll # <code>{{ student.roll_number }}</code>)?
+                </p>
+                <p class="text-muted small mb-4">
+                    This will permanently remove the student record and their login account
+                    (<code>{{ student.user.username }}</code>). This action cannot be undone.
+                </p>
+
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-danger">Yes, delete</button>
+                        <a href="{% url 'students:detail' student.pk %}" class="btn btn-outline-secondary">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,6 @@
+roll_number,subject,marks_obtained,total_marks,attendance_percentage
+S001,Mathematics,85,100,92.5
+S045,Mathematics,70,100,80.0
+S002,Mathematics,150,100,88.0
+S003,,91,100,95.0
+,bad_row,50,100,75.0
