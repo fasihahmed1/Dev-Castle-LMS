@@ -268,10 +268,13 @@ def student_quiz_list(request):
         submitted_at__isnull=False,
     ).values_list('quiz_id', flat=True)
 
-    available = Quiz.objects.filter(
-        is_active=True,
-        class_name=student.class_name,
-        section=student.section,
+    available = Quiz.objects.filter(is_active=True).filter(
+        Q(class_name__isnull=True)
+        | Q(class_name='')
+        | (
+            Q(class_name=student.class_name)
+            & (Q(section__isnull=True) | Q(section='') | Q(section=student.section))
+        ),
     ).exclude(pk__in=completed_ids).prefetch_related('questions')
 
     in_progress = QuizAttempt.objects.filter(
@@ -294,7 +297,7 @@ def quiz_notice(request, pk):
         return redirect('accounts:dashboard_student')
 
     quiz = get_object_or_404(Quiz, pk=pk, is_active=True)
-    if quiz.class_name != student.class_name or quiz.section != student.section:
+    if not quiz.is_visible_to_student(student):
         raise Http404
 
     if not quiz.requires_pre_quiz_notice:
@@ -322,7 +325,7 @@ def quiz_begin(request, pk):
         return redirect('accounts:dashboard_student')
 
     quiz = get_object_or_404(Quiz, pk=pk, is_active=True)
-    if quiz.class_name != student.class_name or quiz.section != student.section:
+    if not quiz.is_visible_to_student(student):
         raise Http404
 
     try:
@@ -345,7 +348,7 @@ def quiz_start(request, pk):
         return redirect('accounts:dashboard_student')
 
     quiz = get_object_or_404(Quiz, pk=pk, is_active=True)
-    if quiz.class_name != student.class_name or quiz.section != student.section:
+    if not quiz.is_visible_to_student(student):
         raise Http404
 
     if quiz.requires_pre_quiz_notice:

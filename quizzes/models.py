@@ -4,12 +4,22 @@ from django.db import models
 
 
 class Quiz(models.Model):
-    """A quiz targeted at a specific class and section."""
+    """A quiz for all students or a specific class (and optional section)."""
 
     title = models.CharField(max_length=200)
     subject = models.CharField(max_length=100)
-    class_name = models.CharField(max_length=100)
-    section = models.CharField(max_length=50)
+    class_name = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        help_text='Leave blank to make this quiz available to all students.',
+    )
+    section = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        help_text='Optional section filter when class_name is set.',
+    )
     created_by = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
@@ -37,6 +47,29 @@ class Quiz(models.Model):
     @property
     def question_count(self):
         return self.questions.count()
+
+    @property
+    def is_global(self):
+        return not self.class_name
+
+    @property
+    def audience_label(self):
+        if self.is_global:
+            return 'All students'
+        if self.section:
+            return f'{self.class_name} / Section {self.section}'
+        return f'{self.class_name} (all sections)'
+
+    def is_visible_to_student(self, student) -> bool:
+        if not self.is_active:
+            return False
+        if self.is_global:
+            return True
+        if student.class_name != self.class_name:
+            return False
+        if self.section and student.section != self.section:
+            return False
+        return True
 
 
 class Question(models.Model):

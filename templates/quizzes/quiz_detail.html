@@ -7,7 +7,7 @@
     <div>
         <h1 class="h3 mb-1">{{ quiz.title }}</h1>
         <p class="text-muted mb-0">
-            {{ quiz.subject }} — {{ quiz.class_name }} / Section {{ quiz.section }}
+            {{ quiz.subject }} — {{ quiz.audience_label }}
             {% if quiz.is_active %}<span class="badge text-bg-success ms-1">Active</span>{% else %}<span class="badge text-bg-secondary ms-1">Draft</span>{% endif %}
             {% if quiz.timer_enabled %}<span class="badge text-bg-info text-dark ms-1">Timer: {{ quiz.duration_minutes }} min</span>{% endif %}
             {% if quiz.anti_cheat_enabled %}<span class="badge text-bg-warning text-dark ms-1">Anti-cheat: {{ quiz.max_violations_allowed }} max</span>{% endif %}
